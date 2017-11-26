@@ -1,2 +1,4 @@
 *.iml
 *.xml
+temp_trained/*
+CMU-Cam_Toolkit_v2/*
