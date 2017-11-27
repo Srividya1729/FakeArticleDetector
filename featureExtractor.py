@@ -1,7 +1,7 @@
 
 
 def extractFourGram():
-    fp = open('featureFour.txt')
+    fp = open('featureFour_dev.txt')
     data = fp.readlines()
     four_grams = []
     perplexity = []
@@ -14,7 +14,7 @@ def extractFourGram():
 
     fp.close()
 
-    fp = open('basic.csv')
+    fp = open('basic_dev.csv')
     fp.readline()
     data = fp.readlines()
     for line in data:
