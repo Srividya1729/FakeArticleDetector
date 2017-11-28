@@ -164,10 +164,6 @@ class Stat_Analysis():
 
 		# self.make_feature_graph(X[:,1:3],"trainingSetLabels.dat")
 
-		#TODO: 
-		# Implement Pipeline with Feature Selection and Estimator
-		# Include GloVe vectors also!
-
 		lr_clf = LogisticRegression()
 		lr_clf.fit(X,y)
 		lr_predicted = lr_clf.predict(X_dev)
