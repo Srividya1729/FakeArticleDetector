@@ -57,7 +57,7 @@ class Stat_Analysis():
 
 	def word2vec(self):
 		'''
-		Function
+		Function to train wrod2vec embeddings and plot embeddings in vector space
 		'''
 		true_sentences = [x.split(" ") for x in self.true_sentences]
 		self.remove_stop_words(true_sentences)
@@ -162,7 +162,7 @@ class Stat_Analysis():
 		X = np.array(X).T[:,:]
 		X_dev = np.array(X_dev).T[:,:]
 
-		self.make_feature_graph(X[:,1:3],"trainingSetLabels.dat")
+		# self.make_feature_graph(X[:,1:3],"trainingSetLabels.dat")
 
 		#TODO: 
 		# Implement Pipeline with Feature Selection and Estimator
@@ -259,9 +259,9 @@ class Stat_Analysis():
 		fig = go.Figure(data=data, layout=layout)
 		plot_url = offline.plot(fig, filename='text-chart-basic')	        
 
-data_object = Load_Data("trainingSet.dat","trainingSetLabels.dat")
-true_sentences, fake_sentences, labels = data_object.return_true_fake()
-obj = Stat_Analysis(true_sentences, fake_sentences, labels)
-obj.article_classifier()
+# data_object = Load_Data("trainingSet.dat","trainingSetLabels.dat")
+# true_sentences, fake_sentences, labels = data_object.return_true_fake()
+# obj = Stat_Analysis(true_sentences, fake_sentences, labels)
+# obj.article_classifier()
 
 
