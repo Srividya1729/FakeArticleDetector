@@ -77,6 +77,7 @@ def compute_tred(articles):
 
 		#Stats for a_prime
 		mean = np.mean(a_prime)
+		print mean
 		median = np.median(a_prime)
 		maximum = np.max(a_prime)
 		minimun = np.min(a_prime)
@@ -84,7 +85,7 @@ def compute_tred(articles):
 
 		#Sparsity of A_PRIME
 		sparse_score = np.count_nonzero(a_prime)/float(n_vocab*n_sent)
-		print sparse_score
+		#print sparse_score
 		sparse.append(sparse_score)
 
 
