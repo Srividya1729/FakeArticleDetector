@@ -73,7 +73,7 @@ def compute_tred(articles):
 		loss = np.square(np.linalg.norm(np.subtract(a,a_prime)))
 		
 		loss_articles.append(loss)
-		print loss
+		#print loss
 
 		#Stats for a_prime
 		mean = np.mean(a_prime)
@@ -84,6 +84,7 @@ def compute_tred(articles):
 
 		#Sparsity of A_PRIME
 		sparse_score = np.count_nonzero(a_prime)/float(n_vocab*n_sent)
+		print sparse_score
 		sparse.append(sparse_score)
 
 
