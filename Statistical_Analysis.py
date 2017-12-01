@@ -2,7 +2,6 @@ import nltk, gensim, numpy as np, sklearn
 from gensim.models import Word2Vec
 from Load_Data import Load_Data
 from sklearn.manifold import TSNE
-import plotly.plotly as py
 import plotly.graph_objs as go
 import plotly.offline as offline
 from nltk.corpus import stopwords
@@ -99,9 +98,10 @@ class Stat_Analysis():
 		y = np.array(y)	
 		X_plot = feature_list
 
+
 		#---------------------------- Decision Boundary Plot -----------------------#
 		if len(feature_list[0])==1 or len(feature_list[0])==2:
-			print "Now plotting Decision boundary Plot. (Works best for 2 features)"
+			print ("Now plotting Decision boundary Plot. (Works best for 2 features)")
 			
 			gs = gridspec.GridSpec(2, 2)
 
@@ -113,7 +113,8 @@ class Stat_Analysis():
 			clf4 = SVC()
 			clf5 = ABC()
 
-			labels = ['Logistic Regression', 'Random Forest', 'Naive Bayes', 'SVM', 'AdaBoost']
+			labels = ['Logistic Regression', 'Random Forest','Naive Bayes', 'SVM', 'AdaBoost']
+
 			for clf, lab, grd in zip([clf1, clf2, clf3, clf4, clf5], labels, itertools.product([0, 1], repeat=2)):
 
 			    clf.fit(X_plot, y)
@@ -124,11 +125,12 @@ class Stat_Analysis():
 			plt.show()
 
 		#---------------------------- Individual Scatter Plot -----------------------#
+
 		plot_idx = 0
 		if len(feature_list[0]) != 1:
 			plot_idx = int(raw_input("Your list has more than 1 feature. Which feature would you like to observe? (Insert Index): "))
 
-		print "Now plotting scatter plot of feature:"
+		print ("Now plotting scatter plot of feature:")
 		x_true = [feat[plot_idx] for feat in x_true_list]
 		x_fake = [feat[plot_idx] for feat in x_fake_list]
 
@@ -146,71 +148,112 @@ class Stat_Analysis():
 
 	def article_classifier(self):
 
-		train_pos, dev_pos = self.pos_load_features()
+		rare_ttr_perplexity_4gram_features = list(extractFourGram('train_gramscore.txt','w2w_train.txt','pos_ratio_train.txt','word2vec_train.txt','ratioTriSix_train.txt','ratioTriFive_train.txt','ratioTriQuad_train.txt','pos_3_train.txt','pos_4_train.txt','EmpericalEntropy_train.txt','perp_3_train.txt','perp_5_train.txt','perp_4_train.txt','basic.csv', 'ratio1_train.txt','ratio2_train.txt'))
 
-		rare_ttr_perplexity_4gram_features = list(extractFourGram('featureFour.txt','basic.csv'))
+		#X = []
+		#X_dev = []
+		X_dev = list(extractFourGram('dev_gramscore.txt','w2w_test.txt','pos_ratio_test.txt','word2vec_dev.txt','ratioTriSix_test.txt','ratioTriFive_test.txt','ratioTriQuad_test.txt','pos_3_test.txt','pos_4_test.txt','EmpericalEntropy_test.txt','perp_3_test.txt','perp_5_test.txt','perp_4_test.txt','basic_dev.csv','ratio1_test.txt','ratio2_test.txt'))
 
-		X_dev = list(extractFourGram('featureFour_dev.txt','basic_dev.csv'))
 		y_dev = self.get_dev_labels()
 
 		X = rare_ttr_perplexity_4gram_features
 		y = self.labels
 
-		X.append(train_pos)
-		X_dev.append(dev_pos)
-
 		X = np.array(X).T[:,:]
+
 		X_dev = np.array(X_dev).T[:,:]
 
-		# self.make_feature_graph(X[:,1:3],"trainingSetLabels.dat")
+		print(X.shape)
+		print(X_dev.shape)
+
+		#self.make_feature_graph(X_dev[:,1:2], "developmentSetLabels.dat")
+		#self.make_feature_graph(X[:,1:2],"trainingSetLabels.dat")
+
+		#X = X[:,1:2]
+		#X_dev = X_dev[:,1:2]
 
 		lr_clf = LogisticRegression()
 		lr_clf.fit(X,y)
 		lr_predicted = lr_clf.predict(X_dev)
+		probs = lr_clf.predict_proba(X_dev)
+
+		''''
+		SOFT METRIC - AVG LOG POSTERIOR 
+		
+		total = 0
+		sum = 0
+		for i in range(len(y_dev)):
+
+			if y_dev[i] == 0 and y_dev[i] == lr_predicted[i]:
+				total += 1
+				sum += np.log2(probs[i][0])
+
+			if y_dev[i] == 1 and y_dev[i] == lr_predicted[i]:
+				total += 1
+				sum += np.log2(probs[i][1])
+
+		print(float(sum)/total)
+		'''
+
 		lr_scores = cross_val_score(lr_clf, X, y, cv=5, n_jobs = 5)
-		print lr_scores,np.mean(lr_scores), np.std(lr_scores)
+		print (lr_scores,np.mean(lr_scores), np.std(lr_scores))
 		# svm_predicted = cross_val_predict(lr_clf, X, y, cv=5)
-		print accuracy_score(y_dev,lr_predicted)
+		print (accuracy_score(y_dev,lr_predicted))
+
 
 		# SVM Parameters:
 		# {'C': [0.1,1.0,10.0,100.0], 'gamma':[1.0,2.0,'auto',0.1,0.01,0.001], 'kernel':['rbf','linear']}
 		svm_clf = SVC(probability=True) 
 		svm_clf.fit(X,y)
 		svm_predicted = svm_clf.predict(X_dev)
+
+		probs = svm_clf.predict_proba(X_dev)
+
 		svm_scores = cross_val_score(svm_clf, X, y, cv=5, n_jobs = 5)
-		print svm_scores,np.mean(svm_scores), np.std(svm_scores)
+		print (svm_scores,np.mean(svm_scores), np.std(svm_scores))
 		# svm_predicted = cross_val_predict(svm_clf, X, y, cv=5)
-		print accuracy_score(y_dev,svm_predicted)
+		print (accuracy_score(y_dev,svm_predicted))
 
 		# RandomForest Parameters:
 		# {'n_estimators':[10,20,5,30],'criterion':['gini','entropy']}
 		rf_clf = RFC() 
 		rf_clf.fit(X,y)
 		rf_predicted = rf_clf.predict(X_dev)
+
+		probs = rf_clf.predict_proba(X_dev)
+
 		rf_scores = cross_val_score(rf_clf, X, y, cv=5, n_jobs = 5)
-		print rf_scores,np.mean(rf_scores), np.std(rf_scores)
+		print (rf_scores,np.mean(rf_scores), np.std(rf_scores))
 		# rf_predicted = cross_val_predict(rf_clf, X, y, cv=5)
-		print accuracy_score(y_dev,rf_predicted)
+		print (accuracy_score(y_dev,rf_predicted))
 
 		# AdaBoost Parameters:
 		# {'n_estimators':[10,20,5,30],'learning_rate':[1.0,0.1,0.01,0.001,0.05]}
 		ab_clf = ABC() 
 		ab_clf.fit(X,y)
 		ab_predicted = ab_clf.predict(X_dev)
+
+		probs = ab_clf.predict_proba(X_dev)
+
+
 		ab_scores = cross_val_score(ab_clf, X, y, cv=5, n_jobs = 5)
-		print ab_scores, np.mean(ab_scores), np.std(ab_scores)
+		print (ab_scores, np.mean(ab_scores), np.std(ab_scores))
 		# ab_predicted = cross_val_predict(ab_clf, X, y, cv=5)
-		print accuracy_score(y_dev,ab_predicted)
+		print (accuracy_score(y_dev,ab_predicted))
 
 		# Gaussian NB Parameters:
 		# {'n_estimators':[10,20,5,30],'learning_rate':[1.0,0.1,0.01,0.001,0.05]}
 		nb_clf = GNB() 
 		nb_clf.fit(X,y)
 		nb_predicted = nb_clf.predict(X_dev)
+
+		probs = nb_clf.predict_proba(X_dev)
+
+
 		nb_scores = cross_val_score(nb_clf, X, y, cv=5, n_jobs = 5)
-		print nb_scores, np.mean(nb_scores), np.std(nb_scores)
+		print (nb_scores, np.mean(nb_scores), np.std(nb_scores))
 		# nb_predicted = cross_val_predict(nb_clf, X, y, cv=5)
-		print accuracy_score(y_dev,nb_predicted)
+		print (accuracy_score(y_dev,nb_predicted))
 
 	def plot_tsne(self,true_model, fake_model):
 
@@ -255,9 +298,11 @@ class Stat_Analysis():
 		fig = go.Figure(data=data, layout=layout)
 		plot_url = offline.plot(fig, filename='text-chart-basic')	        
 
-# data_object = Load_Data("trainingSet.dat","trainingSetLabels.dat")
-# true_sentences, fake_sentences, labels = data_object.return_true_fake()
-# obj = Stat_Analysis(true_sentences, fake_sentences, labels)
-# obj.article_classifier()
 
+data_object = Load_Data("trainingSet.dat","trainingSetLabels.dat")
+true_sentences, fake_sentences, labels = data_object.return_true_fake()
+obj = Stat_Analysis(true_sentences, fake_sentences, labels)
+obj.article_classifier()
+
+#Stat_Analysis.make_feature_graph(feature_list, labels_filename="trainingSetLabels.dat")
 

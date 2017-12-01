@@ -10,7 +10,7 @@ class Load_Data():
 			true_article_count, fake_article_count,label = 0,0,-1
 			for train_point in f_data:	
 				if train_point.strip() == '~~~~~':
-					label = int(f_labels.next())
+					label = int(f_labels.readline())
 					if label:
 						self.labels.append(1)
 						true_article_count += 1
