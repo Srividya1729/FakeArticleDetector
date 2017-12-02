@@ -2,3 +2,8 @@
 *.xml
 temp_trained/*
 CMU-Cam_Toolkit_v2/*
+kenlm/*
+vidya/*
+*.pyc
+corpus.txt
+*.gz
