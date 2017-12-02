@@ -8,15 +8,16 @@ class sentenceObj(object):
 #Article Object - Add more attributes as required
 class articleObj(object):
 
-    def __init__(self, numberOfSentences=0, label=-1, allSentences=[]):
+    def __init__(self, numberOfSentences=0, label=-1, allSentences=[], avgSentLength = 0):
         self.numberOfSentences = numberOfSentences
         self.label = label
         self.allSentences = allSentences
+        self.avgSentLength = avgSentLength
 
 #Creats an Article
-def createArticle(numberOfSentences, label, allSentences):
+def createArticle(numberOfSentences, label, allSentences, avgSentLength):
 
-    article = articleObj(numberOfSentences, label, allSentences)
+    article = articleObj(numberOfSentences, label, allSentences, avgSentLength)
     return article
 
 #Creats a Sentence
@@ -50,6 +51,7 @@ def preprocessData(data, labels):
 
     iteration = 0
     global num
+    global avg
     global k
     k = 0
     allArticles = []
@@ -59,12 +61,13 @@ def preprocessData(data, labels):
         if l == "~~~~~":
 
             if (k != 0):
-                allArticles.append(createArticle(num, Labels[iteration], allSentences))
+                allArticles.append(createArticle(num, Labels[iteration], allSentences, float(avg)/num))
                 iteration = iteration + 1
             else:
                 k = 1
 
             num = 0
+            avg = 0
             allSentences = []
 
         else:
@@ -75,22 +78,25 @@ def preprocessData(data, labels):
             l = l.rstrip("</s>")
             l = l.rstrip()
 
-            allSentences.append(createSentence(l,len(l)))
+            allSentences.append(createSentence(l,len(l.split())))
+            avg = avg + len(l.split())
 
             num = num + 1
 
-    allArticles.append(createArticle(num, Labels[iteration], allSentences))
+    allArticles.append(createArticle(num, Labels[iteration], allSentences, float(avg)/num))
 
     return allArticles
 
 def main():
 
-    print "Train"
+    print("Train")
     trainArticles = preprocessData("trainingSet.dat","trainingSetLabels.dat")
-    print len(trainArticles), "Number of Articles"
-    print "Dev"
+    print(len(trainArticles), "Number of Articles")
+    print("Dev")
     testArticles = preprocessData("developmentSet.dat", "developmentSetLabels.dat")
-    print len(testArticles), "Number of Articles"
+    print(len(testArticles), "Number of Articles")
+
+    return trainArticles, testArticles
 
 if __name__ == "__main__":
     main()
