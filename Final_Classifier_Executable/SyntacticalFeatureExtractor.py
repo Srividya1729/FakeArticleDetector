@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 import string
 from nltk.stem.porter import *
 from stop_words import get_stop_words
-
+rrp = RerankingParser.fetch_and_load('WSJ-PTB3', verbose=False)
 # Stemming
 def stem_tokens(tokens, stemmer):
     stemmed = []
@@ -36,7 +36,7 @@ def clean_document(doc):
     return stop_free
 
 def SyntacticalFeatureExtractorFunction(Articles):
-
+    global rrp
     regex_noun = re.compile('nn*')
     regex_verb = re.compile('vb*')
 
@@ -53,8 +53,8 @@ def SyntacticalFeatureExtractorFunction(Articles):
     for i in range(len(Articles)):
 
         for k in range(len(Articles[i].allSentencesString)):
-
-            text = Articles[i].allSentencesString[k].lower().split()
+            pos_text = rrp.tag(Articles[i].allSentencesString[k].lower())
+            text = pos_text.split()
 
             Articles[i].allSentences[k].token = text
 
