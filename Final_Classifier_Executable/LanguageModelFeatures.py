@@ -8,9 +8,13 @@ def get_lang_features(trainArticles):
     perplexity_fake = []
     perplexity = []
 
-    tri_model = kenlm.Model('model3g_fresh.arpa')
-    quad_model = kenlm.Model('model4g_fresh.arpa')
-    five_model = kenlm.Model('model5g_fresh.arpa')
+    # tri_model = kenlm.Model('model3g_fresh.arpa')
+    # quad_model = kenlm.Model('model4g_fresh.arpa')
+    # five_model = kenlm.Model('model5g_fresh.arpa')
+
+    tri_model = kenlm.LanguageModel('model3g_fresh.binary')
+    quad_model = kenlm.LanguageModel('model4g_fresh.binary')
+    five_model = kenlm.LanguageModel('model5g_fresh.binary')
 
     ratioTriQuad = []
     ratioTriFive = []
