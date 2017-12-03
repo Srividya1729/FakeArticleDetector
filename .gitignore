@@ -2,8 +2,16 @@
 *.xml
 temp_trained/*
 CMU-Cam_Toolkit_v2/*
+<<<<<<< Updated upstream
 kenlm/*
 vidya/*
 *.pyc
 corpus.txt
 *.gz
+*.html
+=======
+*.gz
+*.pyc
+kenlm/*
+vidya/*
+>>>>>>> Stashed changes
